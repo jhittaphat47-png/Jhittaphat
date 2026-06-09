@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์ด มัสแตง โชว์รูม - Ford Mustang Luxury Showroom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --gold-primary: #D4AF37;
+            --gold-light: #F3E5AB;
+            --gold-dark: #AA7C11;
+            --bg-dark: #0A0A0A;
+            --bg-card: #161616;
+            --text-light: #F5F5F5;
+            --text-muted: #A0A0A0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding-bottom: 60px;
+        }
+
+        .luxury-header {
+            text-align: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(22,22,22,0.9) 100%);
+            border-bottom: 2px solid var(--gold-primary);
+            padding: 30px 15px;
+        }
+
+        .showroom-logo {
+            width: 100%;
+            max-width: 450px;
+            border-radius: 8px;
+            border: 1px solid var(--gold-dark);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            border-left: 4px solid var(--gold-primary);
+            padding-left: 10px;
+            margin: 25px 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        /* Product Grid & Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media(min-width: 600px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            border-color: var(--gold-primary);
+            transform: translateY(-5px);
+        }
+
+        .card-img-container {
+            width: 100%;
+            height: 200px;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            min-height: 48px;
+            color: var(--text-light);
+        }
+
+        .card-price {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-primary) 100%);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: auto;
+            transition: opacity 0.2s;
+        }
+
+        .btn-add:active {
+            opacity: 0.8;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: var(--gold-light);
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            background-color: #1f1f1f;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 5px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Cart Summary Section */
+        .cart-box {
+            background-color: var(--bg-card);
+            border: 1px dashed var(--gold-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #222;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-qty {
+            background-color: #333;
+            color: var(--gold-primary);
+            border: 1px solid var(--gold-dark);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .total-price-box {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--gold-primary);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid var(--gold-dark);
+        }
+
+        /* Main Buttons */
+        .btn-submit {
+            background: linear-gradient(135deg, #b8860b 0%, var(--gold-primary) 50%, #f3e5ab 100%);
+            color: #000;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-receipt {
+            background-color: transparent;
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            display: none; /* เปิดเมื่อกดสั่งซื้อแล้ว */
+        }
+
+        /* Invoice PDF Template Hidden in viewport but used by jsPDF */
+        #receipt-template {
+            background-color: #fff;
+            color: #000;
+            padding: 40px;
+            width: 700px;
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        .receipt-header { text-align: center; border-bottom: 2px solid #D4AF37; padding-bottom: 20px; margin-bottom: 20px;}
+        .receipt-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .receipt-table th, .receipt-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .receipt-table th { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+
+    <div class="luxury-header">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBUDSvqdmiquqViYH5cNGAsI5dR87RFvDxvg&s" alt="Ford Mustang Showroom" class="showroom-logo">
+        <h1>FORD MUSTANG SHOWROOM</h1>
+        <div class="subtitle">ระบบสั่งซื้อและจองรถยนต์ระดับพรีเมียม</div>
+    </div>
+
+    <div class="container">
+        <div class="section-title">1. เลือกโมเดลรถยนต์ (MUSTANG MODELS)</div>
+        <div class="grid" id="car-grid"></div>
+
+        <div class="section-title">2. เมนูของแต่งพรีเมียม (ACCESSORIES)</div>
+        <div class="grid" id="accessory-grid"></div>
+
+        <div class="section-title">3. รายการที่เลือกไว้</div>
+        <div class="cart-box">
+            <div id="cart-items-list">
+                <p style="color: var(--text-muted); text-align: center;">ยังไม่มีสินค้าในตะกร้า</p>
+            </div>
+            <div class="total-price-box">
+                <span>ยอดรวมสุทธิ:</span>
+                <span id="grand-total">0 บาท</span>
+            </div>
+        </div>
+
+        <div class="section-title">4. เอกสารข้อมูลผู้จอง</div>
+        <form id="orderForm">
+            <div class="form-group">
+                <label><i class="fa-solid fa-id-card"></i> เลขบัตรประจำตัวประชาชน</label>
+                <input type="text" id="citizenId" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" required maxlength="13">
+            </div>
+            <div class="form-group">
+                <label><i class="fa-solid fa-user"></i> ชื่อ-นามสกุล ลูกค้า</label>
+                <input type="text" id="custName" placeholder="ชื่อ - นามสกุล" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fa-solid fa-phone"></i> เบอร์โทรศัพท์มือถือ</label>
+                <input type="tel" id="custPhone" placeholder="เช่น 0987654321" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fa-solid fa-location-dot"></i> ที่อยู่ปัจจุบัน</label>
+                <textarea id="custAddress" rows="3" placeholder="ระบุที่อยู่ในการจัดส่งเอกสาร" required></textarea>
+            </div>
+
+            <button type="button" class="btn-submit" onclick="submitOrder()"><i class="fa-solid fa-paper-plane"></i> ส่งคำสั่งจองรถ</button>
+            <button type="button" class="btn-receipt" id="downloadReceiptBtn" onclick="generatePDF()"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลดใบเสร็จรับเงิน (PDF)</button>
+        </form>
+    </div>
+
+    <div id="receipt-template">
+        <div class="receipt-header">
+            <h2>FORD MUSTANG SHOWROOM RECEIPT</h2>
+            <p>ใบเสร็จรับเงิน / ใบจองสินค้าพรีเมียม</p>
+        </div>
+        <p><strong>วันที่สั่งซื้อ:</strong> <span id="pdf-date"></span></p>
+        <p><strong>ชื่อลูกค้า:</strong> <span id="pdf-name"></span></p>
+        <p><strong>เลขบัตรประชาชน:</strong> <span id="pdf-citizen"></span></p>
+        <p><strong>เบอร์โทรศัพท์:</strong> <span id="pdf-phone"></span></p>
+        <p><strong>ที่อยู่:</strong> <span id="pdf-address"></span></p>
+        
+        <table class="receipt-table">
+            <thead>
+                <tr>
+                    <th>รายการสินค้า</th>
+                    <th>ราคาต่อหน่วย</th>
+                    <th>จำนวน</th>
+                    <th>ราคารวม</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-table-body"></tbody>
+        </table>
+        <h3 style="text-align: right; margin-top: 20px; color: #AA7C11;">ยอดรวมทั้งสิ้น: <span id="pdf-total"></span> บาท</h3>
+    </div>
+
+    <script>
+        // ใส่ URL Web App ของ Apps Script ที่นี่หลังจากการ Deploy
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZi-5KLOj3JBiTKCxFFFEpVAyFrZOcxq9jfgbuAuE81xHBW6uq-NtSFhI96V1RtbFP/exec";
+
+        // ข้อมูลสินค้า
+        const products = [
+            { id: 1, name: "Ford Mustang 2.3L EcoBoost Coupe Performance Pack", price: 3799000, type: "car", img: "https://api.hwcapis.com:12443/PRD.VDS.API.CAR/Media/view/60bae84e9522411fb638403fa755d9db" },
+            { id: 2, name: "Ford Mustang 5.0L V8 GT Coupe Performance Pack", price: 4999000, type: "car", img: "https://www.grandprix.co.th/wp-content/uploads/2022/11/Ford-Mustang-5.0L-V8-GT-Coupe-Performance-Pack-1200x800-1-1.jpg" },
+            { id: 3, name: "Mustang EcoBoost", price: 3799000, type: "car", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEHrAOpDTlLy72N_lqgVsCSPxfZJKDCno-sQ&s" },
+            { id: 4, name: "Mustang GT", price: 4999000, type: "car", img: "https://www.ford.com/acslibs/content/dam/na/ford/en_us/images/mustang/2026/jellybeans/25_frd_mst_gt_molt_ps34_v1.png" },
+            { id: 5, name: "Mustang Dark Horse", price: 8000000, type: "car", img: "https://www.popsci.com/wp-content/uploads/2023/02/13/Mustang-Dark-Horse-Carbon-Fiber-Wheels_01.jpg" },
+            { id: 6, name: "Mustang Mach 1", price: 5499000, type: "car", img: "https://di-uploads-development.dealerinspire.com/classicfordofmadison/uploads/2021/10/2021-Ford-Mach-1-facing-forward.png" },
+            { id: 7, name: "Shelby GT500", price: 12000000, type: "car", img: "https://robbreport.com/wp-content/uploads/2024/02/2-w-A-FrontSide.jpg?w=1024" },
+            { id: 8, name: "ระบบท่อไอเสีย (Exhaust System)", price: 110000, type: "accessory", img: "https://autobahn-thailand-prod.s3.ap-southeast-1.amazonaws.com/product/9e7b8e2a-e75c-40c4-8d9a-8d0b72952561/product_cover/5235/nIYudOn50TJkh1AmF4aPPKlBoV5J4h-metaM18xMDgweC5qcGcud2VicA%3D%3D-.webp" }, // ใช้ราคาเฉลี่ยกลาง
+            { id: 9, name: "ล้อแม็กฟอร์จ (Forged Wheels)", price: 122500, type: "accessory", img: "https://fs.lnwfile.com/_/fs/_raw/rw/ui/9z.jpg" } // ใช้ราคาเฉลี่ยกลาง
+        ];
+
+        let cart = {};
+
+        // Render สินค้าลงหน้าเว็บ
+        function renderProducts() {
+            const carGrid = document.getElementById('car-grid');
+            const accGrid = document.getElementById('accessory-grid');
+            
+            products.forEach(p => {
+                const cardHTML = `
+                    <div class="card">
+                        <div class="card-img-container">
+                            <img src="${p.img}" class="card-img" alt="${p.name}">
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title">${p.name}</div>
+                            <div class="card-price">${p.price.toLocaleString()} บาท</div>
+                            <button type="button" class="btn-add" onclick="addToCart(${p.id})"><i class="fa-solid fa-cart-plus"></i> ใส่ตะกร้า</button>
+                        </div>
+                    </div>
+                `;
+                if(p.type === 'car') carGrid.innerHTML += cardHTML;
+                else accGrid.innerHTML += cardHTML;
+            });
+        }
+
+        // ระบบตะกร้าสินค้า
+        function addToCart(id) {
+            if (cart[id]) cart[id]++;
+            else cart[id] = 1;
+            updateCartUI();
+        }
+
+        function changeQty(id, delta) {
+            if (cart[id]) {
+                cart[id] += delta;
+                if (cart[id] <= 0) delete cart[id];
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const listContainer = document.getElementById('cart-items-list');
+            const totalLabel = document.getElementById('grand-total');
+            listContainer.innerHTML = '';
+            
+            let total = 0;
+            let hasItems = false;
+
+            for (const id in cart) {
+                hasItems = true;
+                const product = products.find(p => p.id == id);
+                const itemTotal = product.price * cart[id];
+                total += itemTotal;
+
+                listContainer.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <p style="font-weight:500;">${product.name}</p>
+                            <small style="color:var(--gold-primary)">${product.price.toLocaleString()} บาท</small>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button type="button" class="btn-qty" onclick="changeQty(${id}, -1)">-</button>
+                            <span>${cart[id]}</span>
+                            <button type="button" class="btn-qty" onclick="changeQty(${id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (!hasItems) {
+                listContainer.innerHTML = `<p style="color: var(--text-muted); text-align: center;">ยังไม่มีสินค้าในตะกร้า</p>`;
+            }
+
+            totalLabel.innerText = total.toLocaleString() + " บาท";
+        }
+
+        // ส่งข้อมูลจองไป Google Apps Script
+        function submitOrder() {
+            const citizenId = document.getElementById('citizenId').value;
+            const custName = document.getElementById('custName').value;
+            const custPhone = document.getElementById('custPhone').value;
+            const custAddress = document.getElementById('custAddress').value;
+
+            if (!citizenId || !custName || !custPhone || !custAddress) {
+                alert('กรุณากรอกข้อมูลลูกค้าให้ครบถ้วนก่อนส่งคำสั่งซื้อ');
+                return;
+            }
+            if (Object.keys(cart).length === 0) {
+                alert('กรุณาเลือกโมเดลรถหรือของแต่งลงตะกร้าอย่างน้อย 1 รายการ');
+                return;
+            }
+
+            // เตรียมสรุปข้อมูลสินค้าส่งไปชีท
+            let orderedItems = [];
+            let totalAmount = 0;
+            for (const id in cart) {
+                const prod = products.find(p => p.id == id);
+                orderedItems.push(`${prod.name} (x${cart[id]})`);
+                totalAmount += prod.price * cart[id];
+            }
+
+            const payload = {
+                citizenId: citizenId,
+                customerName: custName,
+                phone: custPhone,
+                address: custAddress,
+                items: orderedItems.join(', '),
+                totalPrice: totalAmount
+            };
+
+            alert('กำลังส่งข้อมูลจองรถเข้าระบบพรีเมียม...');
+
+            // ยิงข้อมูลไปที่ Google Sheet ผ่าน Apps Script ด้วย fetch API
+            fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert('บันทึกคำสั่งจองรถของท่านเข้าสู่ระบบ Google Sheet สำเร็จแล้ว!');
+                document.getElementById('downloadReceiptBtn').style.display = 'block'; // แสดงปุ่มพิมพ์ใบเสร็จ
+            }).catch(err => {
+                console.error(err);
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ แต่คุณสามารถกดพิมพ์ใบเสร็จได้ทันที');
+                document.getElementById('downloadReceiptBtn').style.display = 'block';
+            });
+        }
+
+        // ฟังค์ชันออกใบเสร็จ PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            
+            // แมปข้อมูลลงในเทมเพลตใบเสร็จ
+            document.getElementById('pdf-date').innerText = new Date().toLocaleDateString('th-TH');
+            document.getElementById('pdf-name').innerText = document.getElementById('custName').value;
+            document.getElementById('pdf-citizen').innerText = document.getElementById('citizenId').value;
+            document.getElementById('pdf-phone').innerText = document.getElementById('custPhone').value;
+            document.getElementById('pdf-address').innerText = document.getElementById('custAddress').value;
+
+            const tBody = document.getElementById('pdf-table-body');
+            tBody.innerHTML = '';
+            let total = 0;
+
+            for (const id in cart) {
+                const prod = products.find(p => p.id == id);
+                const itemTotal = prod.price * cart[id];
+                total += itemTotal;
+
+                tBody.innerHTML += `
+                    <tr>
+                        <td>${prod.name}</td>
+                        <td>${prod.price.toLocaleString()}</td>
+                        <td>${cart[id]}</td>
+                        <td>${itemTotal.toLocaleString()}</td>
+                    </tr>
+                `;
+            }
+            document.getElementById('pdf-total').innerText = total.toLocaleString();
+
+            // แปลง HTML Element เป็น PDF
+            const element = document.getElementById('receipt-template');
+            
+            html2canvas(element, { scale: 2 }).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210; // ขนาดกว้าง A4 มม.
+                const pageHeight = 295; 
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`Receipt_Mustang_${document.getElementById('custName').value}.pdf`);
+            });
+        }
+
+        // เริ่มต้นการทำงานเมื่อเปิดหน้าเว็บ
+        window.onload = renderProducts;
+    </script>
+</body>
+</html>
